@@ -9,6 +9,7 @@ from typing import List
 
 from .analysis import SynergyEngine
 from .models import CompanyProfile
+from .narrative import NarrativeParser, OpenAIChatModel
 from .reporting import OpportunityReport
 from .templates import ProfileTemplateLibrary
 
@@ -102,9 +103,38 @@ def main(argv: List[str] | None = None) -> None:
     parser.add_argument(
         "--report", type=Path, default=None, help="Optional output file for the report"
     )
+    parser.add_argument(
+        "--narrative",
+        type=Path,
+        action="append",
+        default=[],
+        help="Path(s) to narrative text files to convert into company profiles with an LLM",
+    )
+    parser.add_argument(
+        "--openai-model",
+        type=str,
+        default=None,
+        help="OpenAI chat completion model to use when parsing narratives",
+    )
+    parser.add_argument(
+        "--openai-api-key",
+        type=str,
+        default=None,
+        help="Optional OpenAI API key override for narrative parsing",
+    )
     args = parser.parse_args(argv)
 
     profiles = load_profiles(args.profiles)
+
+    if args.narrative:
+        if not args.openai_model:
+            parser.error("--openai-model must be provided when using --narrative")
+        model = OpenAIChatModel(model=args.openai_model, api_key=args.openai_api_key)
+        narrative_parser = NarrativeParser(model)
+        for narrative_path in args.narrative:
+            narrative_text = narrative_path.read_text(encoding="utf-8")
+            profiles.append(narrative_parser.parse(narrative_text))
+
     engine = build_engine(profiles, args.templates)
     opportunities = engine.build_opportunities()
     report = OpportunityReport(opportunities)

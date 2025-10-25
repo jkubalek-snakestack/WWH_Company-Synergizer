@@ -37,6 +37,9 @@ This document captures the foundational architecture for the multi-layer synergy
 ## Data Flow Overview
 
 1. Ingest profiles using JSON files or API integrations.
+   - Free-form narratives can be converted into structured profiles with the `NarrativeParser`
+     (exposed in the CLI via the `--narrative` flag) which leverages LLMs to extract capabilities,
+     needs, and contextual signals.
 2. Apply templates and tiering rules to ensure consistent metadata and grouping.
 3. Populate the knowledge graph and update analytics indexes.
 4. Run the `SynergyEngine` to produce opportunities (pair, triad, cluster).

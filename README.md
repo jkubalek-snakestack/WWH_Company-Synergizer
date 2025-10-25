@@ -20,6 +20,29 @@ AI-driven synergy intelligence environment for WWH and partner companies.
 3. Review the generated synergy report in your terminal.
 4. Replace the sample data with real company profiles to tailor recommendations.
 
+### Converting narratives into company profiles
+
+You can transform prose descriptions of companies into structured profiles by supplying
+the narrative text to the CLI alongside an OpenAI model name:
+
+```bash
+python -m synergizer.cli data/sample_profiles.json \
+  --templates data/templates.json \
+  --narrative notes/acme.txt \
+  --openai-model gpt-4o-mini
+```
+
+Each `--narrative` flag should point to a text file containing the company story. The CLI
+will call the selected model (respecting the `OPENAI_API_KEY` environment variable or the
+`--openai-api-key` flag) and merge the generated profile with the rest of your dataset
+before running the synergy analysis.
+
+Install the optional LLM dependencies with:
+
+```bash
+pip install -e ".[llm]"
+```
+
 ## Repository Layout
 
 - `src/synergizer/` – core package (models, storage, analysis, reporting, CLI).
