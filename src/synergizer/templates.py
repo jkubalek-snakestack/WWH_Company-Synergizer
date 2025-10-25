@@ -18,6 +18,9 @@ class ProfileTemplateLibrary:
     def load_from_file(self, path: str) -> None:
         with open(path, "r", encoding="utf-8") as handle:
             data = json.load(handle)
+        self.load_from_dict(data)
+
+    def load_from_dict(self, data: Dict) -> None:
         for template in data.get("templates", []):
             profile = ProfileTemplate.from_dict(template)
             self.templates[profile.name] = profile

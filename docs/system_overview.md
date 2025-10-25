@@ -40,6 +40,8 @@ This document captures the foundational architecture for the multi-layer synergy
    - Free-form narratives can be converted into structured profiles with the `NarrativeParser`
      (exposed in the CLI via the `--narrative` flag) which leverages LLMs to extract capabilities,
      needs, and contextual signals.
+   - The FastAPI microservice (`synergizer.api`) accepts the same payloads over HTTP for
+     downstream portals and automations.
 2. Apply templates and tiering rules to ensure consistent metadata and grouping.
 3. Populate the knowledge graph and update analytics indexes.
 4. Run the `SynergyEngine` to produce opportunities (pair, triad, cluster).
@@ -63,3 +65,4 @@ This document captures the foundational architecture for the multi-layer synergy
 - Expand the scoring model using machine learning over historical collaboration success.
 - Introduce authentication and collaboration spaces for partner teams.
 - Design UI mockups aligned with WWH brand and accessibility standards.
+- Deploy the FastAPI service behind API gateways to serve the Next.js portal and partner integrations.

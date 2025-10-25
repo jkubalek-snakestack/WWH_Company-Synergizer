@@ -43,6 +43,25 @@ Install the optional LLM dependencies with:
 pip install -e ".[llm]"
 ```
 
+### Run the FastAPI synergy service
+
+Expose the engine over HTTP by installing the service extras and launching the FastAPI app:
+
+```bash
+pip install -e ".[service]"
+uvicorn synergizer.api:app --reload
+```
+
+Send a request with your company payloads to receive matches and opportunities:
+
+```bash
+curl -X POST http://127.0.0.1:8000/synergy/analyze \
+  -H "Content-Type: application/json" \
+  -d @data/sample_profiles.json
+```
+
+The JSON payload can use either a `profiles` array or the `companies` array shipped in the sample dataset. The response includes the computed opportunities, individual matches, and optional tier groupings when template bundles are supplied.
+
 ## Repository Layout
 
 - `src/synergizer/` – core package (models, storage, analysis, reporting, CLI).

@@ -23,4 +23,22 @@ __all__ = [
     "NarrativeParser",
     "NarrativePromptBuilder",
     "OpenAIChatModel",
+    "create_service_app",
+    "get_service_app",
 ]
+
+
+def create_service_app():
+    """Factory for the FastAPI synergy service (requires the service extra)."""
+
+    from .api import create_app as _create_app
+
+    return _create_app()
+
+
+def get_service_app():
+    """Return the module-level FastAPI instance (requires the service extra)."""
+
+    from .api import app as _app
+
+    return _app
