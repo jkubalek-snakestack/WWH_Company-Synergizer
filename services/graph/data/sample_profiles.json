@@ -1,0 +1,216 @@
+{
+  "companies": [
+    {
+      "slug": "company-a",
+      "name": "Company A",
+      "description": "Non-profit humanitarian organization that educates children in remote African villages.",
+      "mission": "Empower remote learners through education and community support.",
+      "organization_type": "NonProfit",
+      "headquarters": {
+        "city": "Nairobi",
+        "country": "Kenya"
+      },
+      "regions_active": ["Kenya", "Uganda", "Tanzania"],
+      "employee_count": 120,
+      "expertise": ["education", "community engagement", "partnership development"],
+      "industries": ["Education", "Non-profit"],
+      "technologies": ["solar-powered tablets", "offline learning platforms"],
+      "offerings": [
+        {
+          "name": "Education Access Programs",
+          "description": "Curriculum delivery for remote communities",
+          "engagement_channels": ["service", "knowledge", "social_impact"]
+        },
+        {
+          "name": "Community Trust Network",
+          "description": "Network of local leaders and volunteers",
+          "engagement_channels": ["social_impact", "operations"]
+        }
+      ],
+      "needs": [
+        {
+          "name": "Infrastructure Support",
+          "description": "Need for durable technology and facilities",
+          "urgency": 5,
+          "engagement_channels": ["technology", "funding"]
+        },
+        {
+          "name": "Sustainable Utilities",
+          "description": "Access to reliable water and energy",
+          "urgency": 4,
+          "engagement_channels": ["operations", "technology"]
+        }
+      ],
+      "assets": [
+        {
+          "name": "Learning Centers",
+          "description": "Physical spaces in villages for classes"
+        }
+      ],
+      "initiatives": [
+        {
+          "name": "Village Mentor Program",
+          "description": "Local mentorship for students",
+          "status": "Active"
+        }
+      ],
+      "key_contacts": [
+        {
+          "name": "Amina Kilonzo",
+          "title": "Director of Partnerships",
+          "email": "partnerships@companya.org"
+        }
+      ],
+      "cultural_notes": ["Deep commitment to community co-creation"],
+      "impact_metrics": ["50k students served annually"],
+      "goals": ["Expand to 10 new villages", "Introduce STEM curriculum"],
+      "tags": ["education", "africa", "youth"]
+    },
+    {
+      "slug": "company-b",
+      "name": "Company B",
+      "description": "Infrastructure company that creates low cost water drill rigs and fosters sustainable water businesses.",
+      "mission": "Deliver affordable water access with local ownership.",
+      "organization_type": "SocialEnterprise",
+      "headquarters": {
+        "city": "Accra",
+        "country": "Ghana"
+      },
+      "regions_active": ["Ghana", "Nigeria", "Kenya"],
+      "employee_count": 85,
+      "expertise": ["water infrastructure", "training", "microfinance"],
+      "industries": ["Infrastructure", "Water"],
+      "technologies": ["modular drill rigs", "remote monitoring"],
+      "offerings": [
+        {
+          "name": "Low Cost Drill Rigs",
+          "description": "Durable rigs for remote terrain",
+          "engagement_channels": ["product", "technology", "operations"]
+        },
+        {
+          "name": "Water Business Incubator",
+          "description": "Training and financing for local entrepreneurs",
+          "engagement_channels": ["service", "funding", "knowledge"]
+        }
+      ],
+      "needs": [
+        {
+          "name": "Education Partnerships",
+          "description": "Need for community trust to expand training reach",
+          "urgency": 3,
+          "engagement_channels": ["knowledge", "social_impact"]
+        },
+        {
+          "name": "Digital Engagement Tools",
+          "description": "Software to coordinate with field teams",
+          "urgency": 2,
+          "engagement_channels": ["technology", "operations"]
+        }
+      ],
+      "assets": [
+        {
+          "name": "Manufacturing Facility",
+          "description": "Assembly plant capable of scaling production"
+        }
+      ],
+      "key_contacts": [
+        {
+          "name": "David Mensah",
+          "title": "COO",
+          "email": "david@companyb.com"
+        }
+      ],
+      "impact_metrics": ["200 wells created annually"],
+      "goals": ["Expand to East Africa", "Reduce rig costs by 15%"],
+      "tags": ["water", "infrastructure", "africa"]
+    },
+    {
+      "slug": "company-c",
+      "name": "Company C",
+      "description": "Software entertainment company creating physical and digital games.",
+      "mission": "Inspire play that builds problem solving skills.",
+      "organization_type": "ForProfit",
+      "headquarters": {
+        "city": "Austin",
+        "country": "USA"
+      },
+      "regions_active": ["USA", "UK"],
+      "employee_count": 60,
+      "expertise": ["game design", "software engineering", "storytelling"],
+      "industries": ["Entertainment", "Technology"],
+      "technologies": ["game engines", "mobile apps", "AR"],
+      "offerings": [
+        {
+          "name": "Gamified Learning Platform",
+          "description": "Adaptive learning games for youth",
+          "engagement_channels": ["product", "technology", "knowledge"]
+        },
+        {
+          "name": "Creative Studio",
+          "description": "Storytelling and multimedia production",
+          "engagement_channels": ["service", "knowledge"]
+        }
+      ],
+      "needs": [
+        {
+          "name": "Social Impact Distribution",
+          "description": "Need partners with reach into underserved communities",
+          "urgency": 4,
+          "engagement_channels": ["social_impact", "operations"]
+        },
+        {
+          "name": "Sustainability Stories",
+          "description": "Authentic narratives tied to real world impact",
+          "urgency": 2,
+          "engagement_channels": ["knowledge", "social_impact"]
+        }
+      ],
+      "goals": ["Launch educational impact series", "Expand international partnerships"],
+      "tags": ["games", "education", "storytelling"]
+    },
+    {
+      "slug": "company-d",
+      "name": "Company D",
+      "description": "Energy focused IT business increasing grid efficiency and enabling energy swaps.",
+      "mission": "Accelerate the transition to resilient, equitable energy systems.",
+      "organization_type": "ForProfit",
+      "headquarters": {
+        "city": "Denver",
+        "country": "USA"
+      },
+      "regions_active": ["USA", "Kenya"],
+      "employee_count": 140,
+      "expertise": ["energy analytics", "grid technology", "machine learning"],
+      "industries": ["Energy", "Technology"],
+      "technologies": ["smart meters", "energy trading platforms", "microgrid software"],
+      "offerings": [
+        {
+          "name": "Grid Efficiency Suite",
+          "description": "Software and sensors for reducing energy loss",
+          "engagement_channels": ["technology", "service"]
+        },
+        {
+          "name": "Energy Access Lab",
+          "description": "Joint ventures for microgrid pilots",
+          "engagement_channels": ["service", "funding", "technology"]
+        }
+      ],
+      "needs": [
+        {
+          "name": "Community Pilots",
+          "description": "Need trusted partners to test microgrids in remote areas",
+          "urgency": 4,
+          "engagement_channels": ["social_impact", "operations"]
+        },
+        {
+          "name": "Educational Content",
+          "description": "Need storytelling partners to translate complex energy topics",
+          "urgency": 3,
+          "engagement_channels": ["knowledge", "service"]
+        }
+      ],
+      "goals": ["Deploy 5 new microgrids", "Establish energy education initiative"],
+      "tags": ["energy", "technology", "sustainability"]
+    }
+  ]
+}

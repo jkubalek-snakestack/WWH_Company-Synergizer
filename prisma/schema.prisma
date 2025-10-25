@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Visibility {
+  PUBLIC
+  PARTNER
+  PRIVATE
+}
+
+enum Urgency {
+  LOW
+  MED
+  HIGH
+}
+
+enum Capacity {
+  LOW
+  MED
+  HIGH
+}
+
+enum OpportunityStatus {
+  OPEN
+  ARCHIVED
+  IN_PROGRESS
+  WON
+  LOST
+}
+
+model Org {
+  id        String   @id @default(cuid())
+  name      String
+  users     User[]
+  companies Company[]
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id        String   @id @default(cuid())
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  email     String   @unique
+  role      String
+  createdAt DateTime @default(now())
+
+  auditLogs AuditLog[]
+}
+
+model Company {
+  id         String     @id @default(cuid())
+  orgId      String
+  org        Org        @relation(fields: [orgId], references: [id])
+  name       String
+  region     String?
+  mission    String?
+  wwhKeys    String[]
+  visibility Visibility @default(PARTNER)
+  tags       CompanyTag[]
+  needs      Need[]
+  offers     Offer[]
+  contacts   Contact[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  sourceOpportunities Opportunity[] @relation("OpportunitySource")
+  targetOpportunities Opportunity[] @relation("OpportunityTarget")
+}
+
+model CapabilityTag {
+  id        String      @id @default(cuid())
+  orgId     String
+  org       Org         @relation(fields: [orgId], references: [id])
+  name      String
+  slug      String      @unique
+  companies CompanyTag[]
+}
+
+model CompanyTag {
+  companyId String
+  tagId     String
+  company   Company       @relation(fields: [companyId], references: [id])
+  tag       CapabilityTag @relation(fields: [tagId], references: [id])
+
+  @@id([companyId, tagId])
+}
+
+model Need {
+  id          String     @id @default(cuid())
+  companyId   String
+  company     Company    @relation(fields: [companyId], references: [id])
+  title       String
+  description String?
+  tags        String[]
+  urgency     Urgency    @default(MED)
+  visibility  Visibility @default(PARTNER)
+  createdAt   DateTime   @default(now())
+
+  opportunities Opportunity[]
+}
+
+model Offer {
+  id          String     @id @default(cuid())
+  companyId   String
+  company     Company    @relation(fields: [companyId], references: [id])
+  title       String
+  description String?
+  tags        String[]
+  capacity    Capacity   @default(MED)
+  visibility  Visibility @default(PARTNER)
+  createdAt   DateTime   @default(now())
+
+  opportunities Opportunity[]
+}
+
+model Contact {
+  id           String     @id @default(cuid())
+  companyId    String
+  company      Company    @relation(fields: [companyId], references: [id])
+  name         String
+  role         String?
+  email        String?
+  phone        String?
+  privacyLevel Visibility @default(PRIVATE)
+}
+
+model Opportunity {
+  id         String            @id @default(cuid())
+  orgId      String
+  org        Org               @relation(fields: [orgId], references: [id])
+  sourceId   String
+  source     Company           @relation("OpportunitySource", fields: [sourceId], references: [id])
+  targetId   String
+  target     Company           @relation("OpportunityTarget", fields: [targetId], references: [id])
+  needId     String?
+  need       Need?             @relation(fields: [needId], references: [id])
+  offerId    String?
+  offer      Offer?            @relation(fields: [offerId], references: [id])
+  score      Float
+  impact     Float
+  confidence Float
+  breakdown  Json
+  status     OpportunityStatus @default(OPEN)
+  createdAt  DateTime          @default(now())
+
+  playbooks Playbook[]
+}
+
+model Playbook {
+  id            String   @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+  version       Int
+  summary       String
+  sections      Json
+  createdAt     DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id])
+  entity    String
+  entityId  String?
+  action    String
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now())
+}

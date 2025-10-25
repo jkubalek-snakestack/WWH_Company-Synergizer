@@ -1,0 +1,23 @@
+{
+  "name": "wwh-company-synergizer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "format": "prettier --write .",
+    "prisma": "prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "5.13.0"
+  },
+  "devDependencies": {
+    "prettier": "3.2.5",
+    "prisma": "5.13.0",
+    "ts-node": "10.9.2",
+    "turbo": "2.0.3",
+    "typescript": "5.4.5"
+  }
+}
