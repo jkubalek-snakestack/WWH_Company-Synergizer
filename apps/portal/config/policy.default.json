@@ -1,0 +1,13 @@
+{
+  "weights": {
+    "tag_overlap": 0.35,
+    "need_offer_match": 0.30,
+    "urgency": 0.10,
+    "region_proximity": 0.05,
+    "intro_friction": -0.10,
+    "credibility_confidence": 0.10,
+    "wwh_key_alignment": 0.20
+  },
+  "friction_map": {"cold": 0.2, "warm": 0.6, "existing": 1.0},
+  "alignment_bonus": {"Key1": 0.1, "Key2": 0.05}
+}
