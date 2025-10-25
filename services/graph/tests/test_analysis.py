@@ -8,8 +8,11 @@ from synergizer.cli import build_engine
 from synergizer.models import CompanyProfile
 
 
+DATA_DIR = Path(__file__).resolve().parents[1] / "data"
+
+
 def build_profiles() -> list[CompanyProfile]:
-    path = Path("data/sample_profiles.json")
+    path = DATA_DIR / "sample_profiles.json"
     with open(path, "r", encoding="utf-8") as handle:
         data = json.load(handle)
     return [CompanyProfile.from_dict(payload) for payload in data["companies"]]
@@ -17,7 +20,7 @@ def build_profiles() -> list[CompanyProfile]:
 
 def test_engine_generates_opportunities():
     profiles = build_profiles()
-    engine = build_engine(profiles, Path("data/templates.json"))
+    engine = build_engine(profiles, DATA_DIR / "templates.json")
 
     opportunities = engine.build_opportunities()
 

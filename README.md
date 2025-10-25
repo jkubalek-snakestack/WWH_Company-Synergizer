@@ -1,74 +1,56 @@
-# WWH Company Synergizer
+# WWH Company Synergizer Monorepo
 
-AI-driven synergy intelligence environment for WWH and partner companies.
+This monorepo hosts the WWH Company Synergizer platform:
 
-## Features
+- **Portal** – a Next.js + Tailwind + shadcn/ui frontend served from `apps/portal`.
+- **Graph Service** – a Python FastAPI microservice that wraps the synergy engine in `services/graph`.
 
-- **Rich company profiling** powered by structured dataclasses capturing capabilities, needs, assets, and goals.
-- **Graph-based knowledge backbone** using an in-memory directed multigraph to map plugin points and plugs across the ecosystem.
-- **Opportunity discovery engine** that surfaces bilateral and triad collaboration concepts with prioritization.
-- **Template & tiering system** for fast onboarding and curated cohort analysis.
-- **Reporting toolkit** generating executive summaries and detailed opportunity narratives.
+The repository is managed with Turborepo and pnpm workspaces for JavaScript/TypeScript code while keeping the Python service isolated under its own `pyproject.toml`.
 
-## Getting Started
+## Prerequisites
 
-1. Use Python 3.11 or newer in a virtual environment.
-2. Run the synergy explorer against the sample dataset:
-   ```bash
-   python -m synergizer.cli data/sample_profiles.json --templates data/templates.json
-   ```
-3. Review the generated synergy report in your terminal.
-4. Replace the sample data with real company profiles to tailor recommendations.
+- Node.js 20+
+- pnpm 8+
+- Python 3.11+
 
-### Converting narratives into company profiles
-
-You can transform prose descriptions of companies into structured profiles by supplying
-the narrative text to the CLI alongside an OpenAI model name:
+## Install dependencies
 
 ```bash
-python -m synergizer.cli data/sample_profiles.json \
-  --templates data/templates.json \
-  --narrative notes/acme.txt \
-  --openai-model gpt-4o-mini
+pnpm install
 ```
 
-Each `--narrative` flag should point to a text file containing the company story. The CLI
-will call the selected model (respecting the `OPENAI_API_KEY` environment variable or the
-`--openai-api-key` flag) and merge the generated profile with the rest of your dataset
-before running the synergy analysis.
+This installs the portal workspace dependencies and bootstraps Turborepo tooling. Python dependencies are installed separately within `services/graph`.
 
-Install the optional LLM dependencies with:
+## Running the Portal
 
 ```bash
-pip install -e ".[llm]"
+pnpm dev --filter apps/portal
 ```
 
-### Run the FastAPI synergy service
+The portal is built with the Next.js App Router, Tailwind CSS, and shadcn-inspired UI primitives. The command above launches the development server on [http://localhost:3000](http://localhost:3000).
 
-Expose the engine over HTTP by installing the service extras and launching the FastAPI app:
+## Running the Graph Service
 
 ```bash
+cd services/graph
 pip install -e ".[service]"
-uvicorn synergizer.api:app --reload
+uvicorn services.graph.main:app --reload
 ```
 
-Send a request with your company payloads to receive matches and opportunities:
+The FastAPI application exposes the `/synergy/analyze` endpoint backed by the synergy engine and template grouping helpers.
 
-```bash
-curl -X POST http://127.0.0.1:8000/synergy/analyze \
-  -H "Content-Type: application/json" \
-  -d @data/sample_profiles.json
+## Repository Structure
+
+```
+apps/
+  portal/           # Next.js frontend (App Router + Tailwind + shadcn/ui)
+services/
+  graph/            # FastAPI microservice and synergy engine package
+package.json        # Turborepo scripts
+pnpm-workspace.yaml # Workspace definition
 ```
 
-The JSON payload can use either a `profiles` array or the `companies` array shipped in the sample dataset. The response includes the computed opportunities, individual matches, and optional tier groupings when template bundles are supplied.
+## Verification
 
-## Repository Layout
-
-- `src/synergizer/` – core package (models, storage, analysis, reporting, CLI).
-- `data/` – sample profiles and template configuration (JSON).
-- `docs/` – architectural overview and future roadmap.
-- `tests/` – automated tests for the synergy engine.
-
-## Vision
-
-See [`docs/system_overview.md`](docs/system_overview.md) for the holistic platform concept, including UI recommendations and AI augmentation pathways.
+- ✅ `pnpm dev --filter apps/portal` should start the Next.js development server.
+- ✅ `uvicorn services.graph.main:app --reload` should serve the FastAPI API after installing the Python dependencies.
