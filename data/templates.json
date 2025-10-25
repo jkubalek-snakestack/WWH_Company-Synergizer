@@ -1,0 +1,42 @@
+{
+  "templates": [
+    {
+      "name": "NonProfit",
+      "description": "Template for non-profit entities with social impact focus.",
+      "required_fields": ["offerings", "needs", "impact_metrics", "goals", "regions_active"],
+      "optional_fields": ["assets", "initiatives", "key_contacts"],
+      "tags": ["social-impact", "partnership-ready"]
+    },
+    {
+      "name": "SocialEnterprise",
+      "description": "Hybrid business with both profit and impact goals.",
+      "required_fields": ["offerings", "needs", "technologies", "goals"],
+      "optional_fields": ["assets", "initiatives", "key_contacts"],
+      "tags": ["impact", "scalable"]
+    },
+    {
+      "name": "ForProfit",
+      "description": "Commercial organization.",
+      "required_fields": ["offerings", "needs", "technologies", "goals"],
+      "optional_fields": ["assets", "initiatives", "key_contacts"],
+      "tags": ["commercial", "innovation"]
+    }
+  ],
+  "tiering_rules": [
+    {
+      "name": "Africa Impact Coalition",
+      "description": "Organizations active in African regions with social impact offerings.",
+      "criteria": ["africa", "social_impact"]
+    },
+    {
+      "name": "Technology Catalysts",
+      "description": "Companies with strong technology tags ready for co-development.",
+      "criteria": ["technology"]
+    },
+    {
+      "name": "Learning & Storytelling Guild",
+      "description": "Entities focused on education, storytelling, or games.",
+      "criteria": ["education"]
+    }
+  ]
+}
