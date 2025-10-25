@@ -1,0 +1,11 @@
+node_modules
+.pnpm-debug.log*
+.next
+.turbo
+apps/portal/.next
+apps/portal/node_modules
+services/graph/.pytest_cache
+services/graph/.venv
+services/graph/build
+__pycache__
+*.pyc
