@@ -187,8 +187,10 @@ class CompanyProfile:
         ]
         for capability in self.offerings:
             vector.extend([capability.name, capability.description or ""])
+            vector.extend(channel.value for channel in capability.engagement_channels)
         for need in self.needs:
             vector.extend([need.name, need.description or ""])
+            vector.extend(channel.value for channel in need.engagement_channels)
         return [token.lower() for token in vector if token]
 
 
