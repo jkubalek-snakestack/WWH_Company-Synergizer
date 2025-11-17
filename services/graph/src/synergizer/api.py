@@ -62,11 +62,20 @@ def _load_companies(request: SynergyRequest) -> List[CompanyProfile]:
 
 
 def _load_templates(bundle: Optional[Dict[str, Any]]) -> Optional[ProfileTemplateLibrary]:
+    """Load template bundle with error handling for invalid data."""
     if not bundle:
         return None
-    library = ProfileTemplateLibrary()
-    library.load_from_dict(bundle)
-    return library
+    
+    try:
+        library = ProfileTemplateLibrary()
+        library.load_from_dict(bundle)
+        return library
+    except (TypeError, ValueError, KeyError) as e:
+        error_msg = str(e)
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid template bundle: {error_msg}"
+        ) from e
 
 
 def create_app() -> FastAPI:

@@ -229,3 +229,96 @@ def test_analyze_handles_invalid_engagement_channels():
     assert response2.status_code == 422, f"Expected 422, got {response2.status_code}: {response2.json()}"
     body2 = response2.json()
     assert "detail" in body2
+
+
+def load_templates():
+    """Helper to load template bundle for testing."""
+    path = Path(__file__).parent.parent / "data" / "templates.json"
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def test_analyze_with_template_bundle():
+    """Verify API works with template bundle for grouping."""
+    client = TestClient(create_app())
+    payload = load_sample_profiles()
+    template_bundle = load_templates()
+    
+    payload["template_bundle"] = template_bundle
+    
+    response = client.post("/synergy/analyze", json=payload)
+    
+    assert response.status_code == 200
+    body = response.json()
+    assert body["opportunities"] is not None
+    assert body["matches"] is not None
+    # When template bundle is provided, groups should be present
+    assert "groups" in body
+    # Groups should be a dict mapping tier names to company slug lists
+    if body["groups"]:
+        assert isinstance(body["groups"], dict)
+        for tier_name, company_slugs in body["groups"].items():
+            assert isinstance(tier_name, str)
+            assert isinstance(company_slugs, list)
+            assert all(isinstance(slug, str) for slug in company_slugs)
+
+
+def test_analyze_with_invalid_template_bundle():
+    """Verify API handles invalid template bundle gracefully with 422 (not 500)."""
+    client = TestClient(create_app())
+    payload = load_sample_profiles()
+    
+    # Test with malformed template bundle structure
+    payload["template_bundle"] = {
+        "templates": [
+            {
+                # Missing required "name" field
+                "description": "Invalid template",
+            }
+        ]
+    }
+    
+    response = client.post("/synergy/analyze", json=payload)
+    
+    # Should return 422 (Unprocessable Entity) not 500 (Internal Server Error)
+    assert response.status_code == 422, f"Expected 422, got {response.status_code}: {response.json()}"
+    body = response.json()
+    assert "detail" in body
+    assert "Invalid template bundle" in body["detail"]
+
+
+def test_analyze_response_structure():
+    """Verify API response has correct structure."""
+    client = TestClient(create_app())
+    payload = load_sample_profiles()
+    
+    response = client.post("/synergy/analyze", json=payload)
+    
+    assert response.status_code == 200
+    body = response.json()
+    
+    # Verify required fields
+    assert "opportunities" in body
+    assert "matches" in body
+    
+    # Verify types
+    assert isinstance(body["opportunities"], list)
+    assert isinstance(body["matches"], list)
+    
+    # Verify opportunities structure
+    if body["opportunities"]:
+        opp = body["opportunities"][0]
+        assert isinstance(opp, dict)
+        # Check for expected fields in opportunity
+        assert "participants" in opp or "summary" in opp or "priority" in opp
+    
+    # Verify matches structure
+    if body["matches"]:
+        match = body["matches"][0]
+        assert isinstance(match, dict)
+        # Check for expected fields in match
+        assert "source_company" in match or "target_company" in match or "description" in match
+    
+    # Groups is optional
+    if "groups" in body:
+        assert body["groups"] is None or isinstance(body["groups"], dict)
