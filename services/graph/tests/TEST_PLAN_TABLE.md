@@ -20,12 +20,12 @@
 | **GRAPH/STORAGE** |
 | 13 | Graph/Storage | `test_storage.py` | `test_graph_upsert_company_basic` | Medium | Core functionality |
 | 14 | Graph/Storage | `test_storage.py` | `test_graph_upsert_company_generates_slug` | Medium | Slug generation |
-| 15 | Graph/Storage | `test_storage.py` | `test_graph_upsert_company_duplicate_slug` | **High** | Duplicate slug handling |
-| 16 | Graph/Storage | `test_storage.py` | `test_graph_company_raises_keyerror_missing` | **High** | Missing company handling |
+| 15 | Graph/Storage | `test_storage.py` | `test_graph_upsert_company_duplicate_slug` | **High** | ✅ IMPLEMENTED - Duplicate slug handling |
+| 16 | Graph/Storage | `test_storage.py` | `test_graph_company_raises_keyerror_missing` | **High** | ✅ IMPLEMENTED - Missing company handling |
 | 17 | Graph/Storage | `test_storage.py` | `test_graph_remove_company_removes_edges` | Medium | Graph integrity |
 | 18 | Graph/Storage | `test_storage.py` | `test_graph_link_companies_valid` | Medium | Link validation |
-| 19 | Graph/Storage | `test_storage.py` | `test_graph_link_companies_invalid_source` | **High** | Link validation |
-| 20 | Graph/Storage | `test_storage.py` | `test_graph_link_companies_invalid_target` | **High** | Link validation |
+| 19 | Graph/Storage | `test_storage.py` | `test_graph_link_companies_invalid_source` | **High** | ✅ IMPLEMENTED - Link validation |
+| 20 | Graph/Storage | `test_storage.py` | `test_graph_link_companies_invalid_target` | **High** | ✅ IMPLEMENTED - Link validation |
 | 21 | Graph/Storage | `test_storage.py` | `test_graph_matches_for_returns_correct_matches` | Medium | Query correctness |
 | 22 | Graph/Storage | `test_storage.py` | `test_graph_matches_for_empty_returns_empty` | Low | Edge cases |
 | 23 | Graph/Storage | `test_storage.py` | `test_graph_adjacency_matrix_correctness` | Low | Data structure |
@@ -111,7 +111,7 @@
 
 ### Phase 1: High Priority (25 tests)
 - [ ] Models: Tests 1-2, 5-6, 8
-- [ ] Graph/Storage: Tests 15-16, 19-20
+- [x] Graph/Storage: Tests 15-16, 19-20 ✅ IMPLEMENTED
 - [ ] API: Tests 28-31
 - [ ] CLI: Tests 40-42
 - [ ] Narrative: Tests 54-55, 58
