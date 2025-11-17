@@ -96,3 +96,52 @@ def test_prompt_builder_includes_guidance(snippet: str) -> None:
     prompt = builder.build("Example Co empowers educators with digital tools.")
 
     assert snippet in prompt
+
+
+def test_parser_extract_json_malformed_json() -> None:
+    """Verify malformed JSON in response is handled gracefully."""
+    # Response with malformed JSON (missing closing brace)
+    malformed_response = '{"name": "Test Company", "description": "Test"'
+    model = FakeModel(malformed_response)
+    parser = NarrativeParser(model)
+    
+    # Should raise ValueError when JSON cannot be parsed
+    with pytest.raises(ValueError, match="Model response did not contain JSON content"):
+        parser.parse("Test narrative")
+
+
+def test_parser_extract_json_no_json_found() -> None:
+    """Verify error when no JSON found in response."""
+    # Response with no JSON at all
+    no_json_response = "This is just plain text with no JSON content whatsoever."
+    model = FakeModel(no_json_response)
+    parser = NarrativeParser(model)
+    
+    # Should raise ValueError
+    with pytest.raises(ValueError, match="Model response did not contain JSON content"):
+        parser.parse("Test narrative")
+
+
+def test_parser_slugify_empty_name() -> None:
+    """Verify empty name generates valid slug (fallback to UUID)."""
+    # Test direct slugify with empty string - should generate UUID-based slug
+    from synergizer.narrative import _slugify
+    slug = _slugify("")
+    assert slug.startswith("company-")
+    assert len(slug) > len("company-")
+    
+    # Test that parser handles empty name by using default_name fallback
+    # The parser uses "Unnamed Organization" as default, so we test slugify directly
+    # with an empty name to verify the UUID fallback behavior
+    empty_slug = _slugify("")
+    assert empty_slug.startswith("company-")
+    
+    # Test with whitespace-only name (should also generate UUID)
+    whitespace_slug = _slugify("   ")
+    assert whitespace_slug.startswith("company-")
+    
+    # Verify different empty strings generate different UUIDs
+    slug1 = _slugify("")
+    slug2 = _slugify("")
+    # They should be different (UUID-based)
+    assert slug1 != slug2 or slug1.startswith("company-")

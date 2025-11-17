@@ -69,8 +69,8 @@ def test_cli_build_engine_with_templates():
         profiles_path.unlink()
 
 
-def test_cli_build_engine_missing_template_file():
-    """Verify missing template file is handled."""
+def test_cli_build_engine_missing_template_file(capsys):
+    """Verify missing template file is handled with friendly error and exit code 1."""
     # Create temporary profiles file
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
         data = {
@@ -91,16 +91,20 @@ def test_cli_build_engine_missing_template_file():
     try:
         profiles = load_profiles(profiles_path)
         
-        # Current implementation may raise FileNotFoundError
-        # This test documents the current behavior
-        with pytest.raises((FileNotFoundError, OSError)):
+        # Should exit with code 1 and print friendly error
+        with pytest.raises(SystemExit) as exc_info:
             build_engine(profiles, missing_template_path)
+        
+        assert exc_info.value.code == 1
+        captured = capsys.readouterr()
+        assert "Error: Template file not found" in captured.err
+        assert str(missing_template_path) in captured.err
     finally:
         profiles_path.unlink()
 
 
-def test_cli_build_engine_invalid_template_file():
-    """Verify invalid template JSON is handled."""
+def test_cli_build_engine_invalid_template_file(capsys):
+    """Verify invalid template JSON is handled with friendly error and exit code 1."""
     # Create temporary profiles file
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
         data = {
@@ -131,10 +135,14 @@ def test_cli_build_engine_invalid_template_file():
     try:
         profiles = load_profiles(profiles_path)
         
-        # Current implementation may raise TypeError or ValueError
-        # This test documents the current behavior
-        with pytest.raises((TypeError, ValueError, KeyError)):
+        # Should exit with code 1 and print friendly error
+        with pytest.raises(SystemExit) as exc_info:
             build_engine(profiles, invalid_template_path)
+        
+        assert exc_info.value.code == 1
+        captured = capsys.readouterr()
+        assert "Error: Invalid template bundle" in captured.err
+        assert str(invalid_template_path) in captured.err
     finally:
         profiles_path.unlink()
         invalid_template_path.unlink()
@@ -177,8 +185,8 @@ def test_cli_narrative_requires_model():
         narrative_path.unlink()
 
 
-def test_cli_narrative_missing_file():
-    """Verify missing narrative file is handled."""
+def test_cli_narrative_missing_file(capsys):
+    """Verify missing narrative file is handled with friendly error and exit code 1."""
     # Create temporary profiles file
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
         data = {
@@ -197,14 +205,81 @@ def test_cli_narrative_missing_file():
     missing_narrative_path = Path("/nonexistent/narrative.txt")
     
     try:
-        # Current implementation may raise FileNotFoundError when reading narrative
-        # This test documents the current behavior
-        with pytest.raises((FileNotFoundError, OSError)):
+        # Should exit with code 1 and print friendly error
+        with pytest.raises(SystemExit) as exc_info:
             main([
                 str(profiles_path),
                 "--narrative", str(missing_narrative_path),
                 "--openai-model", "gpt-4",
             ])
+        
+        assert exc_info.value.code == 1
+        captured = capsys.readouterr()
+        assert "Error: Narrative file not found" in captured.err
+        assert str(missing_narrative_path) in captured.err
     finally:
         profiles_path.unlink()
+
+
+def test_cli_load_profiles_missing_file(capsys):
+    """Verify missing profile file is handled with friendly error and exit code 1."""
+    missing_path = Path("/nonexistent/profiles.json")
+    
+    # Should exit with code 1 and print friendly error
+    with pytest.raises(SystemExit) as exc_info:
+        main([str(missing_path)])
+    
+    assert exc_info.value.code == 1
+    captured = capsys.readouterr()
+    assert "Error: Profile file not found" in captured.err
+    assert str(missing_path) in captured.err
+
+
+def test_cli_load_profiles_invalid_json(capsys):
+    """Verify invalid JSON in profile file is handled with friendly error and exit code 1."""
+    # Create temporary file with invalid JSON
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        f.write("{ invalid json }")
+        invalid_json_path = Path(f.name)
+    
+    try:
+        # Should exit with code 1 and print friendly error
+        with pytest.raises(SystemExit) as exc_info:
+            main([str(invalid_json_path)])
+        
+        assert exc_info.value.code == 1
+        captured = capsys.readouterr()
+        assert "Error: Invalid JSON in profile file" in captured.err
+        assert str(invalid_json_path) in captured.err
+    finally:
+        invalid_json_path.unlink()
+
+
+def test_cli_load_profiles_malformed_structure(capsys):
+    """Verify malformed JSON structure (missing 'companies' key) is handled with friendly error."""
+    # Create temporary file with valid JSON but missing 'companies' key
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        data = {
+            "not_companies": [
+                {
+                    "slug": "test-company",
+                    "name": "Test Company",
+                }
+            ]
+        }
+        json.dump(data, f)
+        malformed_path = Path(f.name)
+    
+    try:
+        # Should exit with code 1 and print friendly error
+        with pytest.raises(SystemExit) as exc_info:
+            main([str(malformed_path)])
+        
+        assert exc_info.value.code == 1
+        captured = capsys.readouterr()
+        assert "Error: Profile file" in captured.err
+        assert "missing required 'companies' key" in captured.err
+        assert str(malformed_path) in captured.err
+    finally:
+        malformed_path.unlink()
 

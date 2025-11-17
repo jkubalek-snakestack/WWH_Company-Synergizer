@@ -5,14 +5,14 @@
 | # | Test Group | Test File | Test Case Name | Priority | Risk Addressed |
 |---|------------|-----------|----------------|----------|----------------|
 | **MODELS** |
-| 1 | Models | `test_models.py` | `test_company_profile_requires_slug` | **High** | Missing validation for required fields |
-| 2 | Models | `test_models.py` | `test_company_profile_requires_name` | **High** | Missing validation for required fields |
+| 1 | Models | `test_models.py` | `test_company_profile_requires_slug` | **High** | ✅ IMPLEMENTED - Missing validation for required fields |
+| 2 | Models | `test_models.py` | `test_company_profile_requires_name` | **High** | ✅ IMPLEMENTED - Missing validation for required fields |
 | 3 | Models | `test_models.py` | `test_company_profile_handles_optional_fields` | Medium | Data integrity |
 | 4 | Models | `test_models.py` | `test_company_profile_validates_nested_objects` | Medium | Nested validation |
-| 5 | Models | `test_models.py` | `test_capability_from_dict_with_invalid_channels` | **High** | EngagementChannel enum fragility |
-| 6 | Models | `test_models.py` | `test_need_from_dict_with_invalid_channels` | **High** | EngagementChannel enum fragility |
+| 5 | Models | `test_models.py` | `test_capability_from_dict_with_invalid_channels` | **High** | ✅ IMPLEMENTED - EngagementChannel enum fragility |
+| 6 | Models | `test_models.py` | `test_need_from_dict_with_invalid_channels` | **High** | ✅ IMPLEMENTED - EngagementChannel enum fragility |
 | 7 | Models | `test_models.py` | `test_engagement_channel_from_value_valid` | Medium | Enum handling |
-| 8 | Models | `test_models.py` | `test_engagement_channel_from_value_invalid` | **High** | Enum error handling |
+| 8 | Models | `test_models.py` | `test_engagement_channel_from_value_invalid` | **High** | ✅ IMPLEMENTED - Enum error handling |
 | 9 | Models | `test_models.py` | `test_location_from_dict_none` | Low | Null handling |
 | 10 | Models | `test_models.py` | `test_contact_from_dict_minimal` | Low | Minimal data |
 | 11 | Models | `test_models.py` | `test_company_profile_vectorize_empty_fields` | Low | Edge cases |
@@ -47,9 +47,9 @@
 | 38 | API | `test_api.py` | `test_analyze_extra_fields_ignored` | Low | Input sanitization |
 | **CLI** |
 | 39 | CLI | `test_cli.py` | `test_cli_load_profiles_valid_json` | Medium | ✅ IMPLEMENTED - File handling |
-| 40 | CLI | `test_cli.py` | `test_cli_load_profiles_missing_file` | **High** | File handling |
-| 41 | CLI | `test_cli.py` | `test_cli_load_profiles_invalid_json` | **High** | JSON validation |
-| 42 | CLI | `test_cli.py` | `test_cli_load_profiles_malformed_structure` | **High** | JSON validation |
+| 40 | CLI | `test_cli.py` | `test_cli_load_profiles_missing_file` | **High** | ✅ IMPLEMENTED - File handling |
+| 41 | CLI | `test_cli.py` | `test_cli_load_profiles_invalid_json` | **High** | ✅ IMPLEMENTED - JSON validation |
+| 42 | CLI | `test_cli.py` | `test_cli_load_profiles_malformed_structure` | **High** | ✅ IMPLEMENTED - JSON validation |
 | 43 | CLI | `test_cli.py` | `test_cli_build_engine_with_templates` | Medium | ✅ IMPLEMENTED - Template integration |
 | 44 | CLI | `test_cli.py` | `test_cli_build_engine_missing_template_file` | Medium | ✅ IMPLEMENTED - Template error handling |
 | 45 | CLI | `test_cli.py` | `test_cli_build_engine_invalid_template_file` | Medium | ✅ IMPLEMENTED - Template validation |
@@ -62,11 +62,11 @@
 | 51 | Narrative | `test_narrative.py` | `test_parser_builds_profile_from_json_payload` | Medium | ✅ EXISTS - Core functionality |
 | 52 | Narrative | `test_narrative.py` | `test_parser_generates_slug_when_missing` | Medium | ✅ EXISTS - Slug generation |
 | 53 | Narrative | `test_narrative.py` | `test_parser_extracts_json_from_wrapped_response` | Medium | ✅ EXISTS - JSON extraction |
-| 54 | Narrative | `test_narrative.py` | `test_parser_extract_json_malformed_json` | **High** | JSON extraction fragility |
-| 55 | Narrative | `test_narrative.py` | `test_parser_extract_json_no_json_found` | **High** | JSON extraction error handling |
+| 54 | Narrative | `test_narrative.py` | `test_parser_extract_json_malformed_json` | **High** | ✅ IMPLEMENTED - JSON extraction fragility |
+| 55 | Narrative | `test_narrative.py` | `test_parser_extract_json_no_json_found` | **High** | ✅ IMPLEMENTED - JSON extraction error handling |
 | 56 | Narrative | `test_narrative.py` | `test_parser_extract_json_nested_structures` | Medium | JSON extraction edge cases |
 | 57 | Narrative | `test_narrative.py` | `test_parser_slugify_special_characters` | Low | Slug generation edge cases |
-| 58 | Narrative | `test_narrative.py` | `test_parser_slugify_empty_name` | **High** | Slug generation edge cases |
+| 58 | Narrative | `test_narrative.py` | `test_parser_slugify_empty_name` | **High** | ✅ IMPLEMENTED - Slug generation edge cases |
 | 59 | Narrative | `test_narrative.py` | `test_parser_default_name_fallback` | Medium | Default handling |
 | 60 | Narrative | `test_narrative.py` | `test_parser_openai_model_missing_package` | Medium | Dependency handling |
 | 61 | Narrative | `test_narrative.py` | `test_parser_openai_model_api_error` | Low | External API errors |
@@ -77,8 +77,8 @@
 | 65 | Analysis | `test_analysis.py` | `test_engine_find_complementary_pairs_empty` | Low | Edge cases |
 | 66 | Analysis | `test_analysis.py` | `test_engine_find_complementary_pairs_single_company` | Low | Edge cases |
 | 67 | Analysis | `test_analysis.py` | `test_engine_build_opportunities_no_matches` | Low | Edge cases |
-| 68 | Analysis | `test_analysis.py` | `test_engine_register_companies_duplicate_slugs` | **High** | Duplicate handling |
-| 69 | Analysis | `test_analysis.py` | `test_engine_profile_missing_company` | **High** | Missing company handling |
+| 68 | Analysis | `test_analysis.py` | `test_engine_register_companies_duplicate_slugs` | **High** | ✅ IMPLEMENTED - Duplicate handling |
+| 69 | Analysis | `test_analysis.py` | `test_engine_profile_missing_company` | **High** | ✅ IMPLEMENTED - Missing company handling |
 | 70 | Analysis | `test_analysis.py` | `test_engine_term_indexing` | Low | Internal state |
 | 71 | Analysis | `test_analysis.py` | `test_engine_triad_generation_requires_two_pairs` | Medium | Triad logic |
 | 72 | Analysis | `test_analysis.py` | `test_engine_priority_scoring` | Low | Priority logic |
@@ -87,8 +87,8 @@
 | **TEMPLATE LIBRARY** |
 | 75 | Templates | `test_templates.py` | `test_template_library_load_from_file` | Medium | File loading |
 | 76 | Templates | `test_templates.py` | `test_template_library_load_from_dict` | Medium | Dict loading |
-| 77 | Templates | `test_templates.py` | `test_template_library_template_missing_raises` | **High** | Missing template handling |
-| 78 | Templates | `test_templates.py` | `test_template_library_tier_missing_raises` | **High** | Missing tier handling |
+| 77 | Templates | `test_templates.py` | `test_template_library_template_missing_raises` | **High** | ✅ IMPLEMENTED - Missing template handling |
+| 78 | Templates | `test_templates.py` | `test_template_library_tier_missing_raises` | **High** | ✅ IMPLEMENTED - Missing tier handling |
 | 79 | Templates | `test_templates.py` | `test_template_library_auto_complete_profile` | Medium | Template application |
 | 80 | Templates | `test_templates.py` | `test_template_library_group_companies` | Medium | Tiering logic |
 | 81 | Templates | `test_templates.py` | `test_template_library_group_companies_no_matches` | Low | Edge cases |
@@ -110,13 +110,13 @@
 ## Implementation Checklist
 
 ### Phase 1: High Priority (25 tests)
-- [ ] Models: Tests 1-2, 5-6, 8
+- [x] Models: Tests 1-2, 5-6, 8 ✅ IMPLEMENTED
 - [x] Graph/Storage: Tests 15-16, 19-20 ✅ IMPLEMENTED
 - [x] API: Tests 28-31 ✅ IMPLEMENTED
-- [ ] CLI: Tests 40-42
-- [ ] Narrative: Tests 54-55, 58
-- [ ] Analysis: Tests 68-69
-- [ ] Templates: Tests 77-78
+- [x] CLI: Tests 40-42 ✅ IMPLEMENTED
+- [x] Narrative: Tests 54-55, 58 ✅ IMPLEMENTED
+- [x] Analysis: Tests 68-69 ✅ IMPLEMENTED
+- [x] Templates: Tests 77-78 ✅ IMPLEMENTED
 
 ### Phase 2: Medium Priority (33 tests)
 - [ ] Models: Tests 3-4, 7

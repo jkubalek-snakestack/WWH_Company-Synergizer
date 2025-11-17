@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import List
 
@@ -15,16 +16,67 @@ from .templates import ProfileTemplateLibrary
 
 
 def load_profiles(path: Path) -> List[CompanyProfile]:
-    with open(path, "r", encoding="utf-8") as handle:
-        data = json.load(handle)
-    return [CompanyProfile.from_dict(item) for item in data["companies"]]
+    """Load company profiles from a JSON file with friendly error handling."""
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except FileNotFoundError:
+        print(f"Error: Profile file not found: {path}", file=sys.stderr)
+        sys.exit(1)
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON in profile file '{path}': {e}", file=sys.stderr)
+        sys.exit(1)
+    except OSError as e:
+        print(f"Error: Cannot read profile file '{path}': {e}", file=sys.stderr)
+        sys.exit(1)
+    
+    if not isinstance(data, dict):
+        print(f"Error: Profile file '{path}' must contain a JSON object", file=sys.stderr)
+        sys.exit(1)
+    
+    if "companies" not in data:
+        print(f"Error: Profile file '{path}' is missing required 'companies' key", file=sys.stderr)
+        sys.exit(1)
+    
+    if not isinstance(data["companies"], list):
+        print(f"Error: 'companies' in '{path}' must be a list", file=sys.stderr)
+        sys.exit(1)
+    
+    profiles = []
+    for idx, item in enumerate(data["companies"]):
+        try:
+            profiles.append(CompanyProfile.from_dict(item))
+        except (KeyError, TypeError, ValueError) as e:
+            print(f"Error: Invalid company profile at index {idx} in '{path}': {e}", file=sys.stderr)
+            sys.exit(1)
+    
+    if not profiles:
+        print(f"Error: No valid company profiles found in '{path}'", file=sys.stderr)
+        sys.exit(1)
+    
+    return profiles
 
 
 def build_engine(profiles: List[CompanyProfile], templates: Path | None) -> SynergyEngine:
+    """Build synergy engine with optional template enrichment."""
     engine = SynergyEngine()
     if templates:
-        library = ProfileTemplateLibrary()
-        library.load_from_file(str(templates))
+        try:
+            library = ProfileTemplateLibrary()
+            library.load_from_file(str(templates))
+        except FileNotFoundError:
+            print(f"Error: Template file not found: {templates}", file=sys.stderr)
+            sys.exit(1)
+        except json.JSONDecodeError as e:
+            print(f"Error: Invalid JSON in template file '{templates}': {e}", file=sys.stderr)
+            sys.exit(1)
+        except (ValueError, TypeError, KeyError) as e:
+            print(f"Error: Invalid template bundle in '{templates}': {e}", file=sys.stderr)
+            sys.exit(1)
+        except OSError as e:
+            print(f"Error: Cannot read template file '{templates}': {e}", file=sys.stderr)
+            sys.exit(1)
+        
         enriched = []
         for profile in profiles:
             template_name = profile.organization_type or "General"
@@ -129,11 +181,26 @@ def main(argv: List[str] | None = None) -> None:
     if args.narrative:
         if not args.openai_model:
             parser.error("--openai-model must be provided when using --narrative")
-        model = OpenAIChatModel(model=args.openai_model, api_key=args.openai_api_key)
-        narrative_parser = NarrativeParser(model)
-        for narrative_path in args.narrative:
-            narrative_text = narrative_path.read_text(encoding="utf-8")
-            profiles.append(narrative_parser.parse(narrative_text))
+        try:
+            model = OpenAIChatModel(model=args.openai_model, api_key=args.openai_api_key)
+            narrative_parser = NarrativeParser(model)
+            for narrative_path in args.narrative:
+                try:
+                    narrative_text = narrative_path.read_text(encoding="utf-8")
+                except FileNotFoundError:
+                    print(f"Error: Narrative file not found: {narrative_path}", file=sys.stderr)
+                    sys.exit(1)
+                except OSError as e:
+                    print(f"Error: Cannot read narrative file '{narrative_path}': {e}", file=sys.stderr)
+                    sys.exit(1)
+                try:
+                    profiles.append(narrative_parser.parse(narrative_text))
+                except Exception as e:
+                    print(f"Error: Failed to parse narrative file '{narrative_path}': {e}", file=sys.stderr)
+                    sys.exit(1)
+        except Exception as e:
+            print(f"Error: Failed to initialize OpenAI model: {e}", file=sys.stderr)
+            sys.exit(1)
 
     engine = build_engine(profiles, args.templates)
     opportunities = engine.build_opportunities()
@@ -141,11 +208,15 @@ def main(argv: List[str] | None = None) -> None:
 
     summary = report.executive_summary()
     if args.report:
-        with open(args.report, "w", encoding="utf-8") as handle:
-            handle.write(summary)
-            handle.write("\n\n")
-            for section in report.detail_sections():
-                handle.write(f"# {section.title}\n{section.body}\n\n")
+        try:
+            with open(args.report, "w", encoding="utf-8") as handle:
+                handle.write(summary)
+                handle.write("\n\n")
+                for section in report.detail_sections():
+                    handle.write(f"# {section.title}\n{section.body}\n\n")
+        except OSError as e:
+            print(f"Error: Cannot write report file '{args.report}': {e}", file=sys.stderr)
+            sys.exit(1)
     else:
         print(summary)
         print()
