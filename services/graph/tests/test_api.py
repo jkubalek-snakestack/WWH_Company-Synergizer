@@ -268,7 +268,7 @@ def test_analyze_with_invalid_template_bundle():
     client = TestClient(create_app())
     payload = load_sample_profiles()
     
-    # Test with malformed template bundle structure
+    # Test with malformed template bundle structure - missing required "name" field
     payload["template_bundle"] = {
         "templates": [
             {
@@ -285,6 +285,49 @@ def test_analyze_with_invalid_template_bundle():
     body = response.json()
     assert "detail" in body
     assert "Invalid template bundle" in body["detail"]
+    # Error message should mention the missing field
+    assert "name" in body["detail"].lower() or "missing required field" in body["detail"].lower()
+    
+    # Test with invalid tiering rule structure
+    payload2 = load_sample_profiles()
+    payload2["template_bundle"] = {
+        "tiering_rules": [
+            {
+                # Missing required "criteria" field
+                "name": "Test Rule",
+                "description": "Test description",
+            }
+        ]
+    }
+    
+    response2 = client.post("/synergy/analyze", json=payload2)
+    assert response2.status_code == 422
+    body2 = response2.json()
+    assert "Invalid template bundle" in body2["detail"]
+    assert "criteria" in body2["detail"].lower() or "missing required field" in body2["detail"].lower()
+    
+    # Test with non-dictionary template bundle
+    # Note: Pydantic validation catches this before our code, so it returns a different format
+    payload3 = load_sample_profiles()
+    payload3["template_bundle"] = "not-a-dict"
+    
+    response3 = client.post("/synergy/analyze", json=payload3)
+    assert response3.status_code == 422
+    body3 = response3.json()
+    # Pydantic validation error format is different, but still 422
+    assert "detail" in body3
+    
+    # Test with templates not being a list
+    payload4 = load_sample_profiles()
+    payload4["template_bundle"] = {
+        "templates": "not-a-list"
+    }
+    
+    response4 = client.post("/synergy/analyze", json=payload4)
+    assert response4.status_code == 422
+    body4 = response4.json()
+    assert "Invalid template bundle" in body4["detail"]
+    assert "templates" in body4["detail"].lower() or "must be a list" in body4["detail"].lower()
 
 
 def test_analyze_response_structure():

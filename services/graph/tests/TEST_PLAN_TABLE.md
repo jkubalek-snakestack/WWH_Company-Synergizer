@@ -46,17 +46,17 @@
 | 37 | API | `test_api.py` | `test_analyze_profiles_alias_works` | Low | API compatibility |
 | 38 | API | `test_api.py` | `test_analyze_extra_fields_ignored` | Low | Input sanitization |
 | **CLI** |
-| 39 | CLI | `test_cli.py` | `test_cli_load_profiles_valid_json` | Medium | File handling |
+| 39 | CLI | `test_cli.py` | `test_cli_load_profiles_valid_json` | Medium | ✅ IMPLEMENTED - File handling |
 | 40 | CLI | `test_cli.py` | `test_cli_load_profiles_missing_file` | **High** | File handling |
 | 41 | CLI | `test_cli.py` | `test_cli_load_profiles_invalid_json` | **High** | JSON validation |
 | 42 | CLI | `test_cli.py` | `test_cli_load_profiles_malformed_structure` | **High** | JSON validation |
-| 43 | CLI | `test_cli.py` | `test_cli_build_engine_with_templates` | Medium | Template integration |
-| 44 | CLI | `test_cli.py` | `test_cli_build_engine_missing_template_file` | Medium | Template error handling |
-| 45 | CLI | `test_cli.py` | `test_cli_build_engine_invalid_template_file` | Medium | Template validation |
+| 43 | CLI | `test_cli.py` | `test_cli_build_engine_with_templates` | Medium | ✅ IMPLEMENTED - Template integration |
+| 44 | CLI | `test_cli.py` | `test_cli_build_engine_missing_template_file` | Medium | ✅ IMPLEMENTED - Template error handling |
+| 45 | CLI | `test_cli.py` | `test_cli_build_engine_invalid_template_file` | Medium | ✅ IMPLEMENTED - Template validation |
 | 46 | CLI | `test_cli.py` | `test_cli_main_writes_report_file` | Low | Output handling |
 | 47 | CLI | `test_cli.py` | `test_cli_main_prints_to_console` | Low | Output handling |
-| 48 | CLI | `test_cli.py` | `test_cli_narrative_requires_model` | Medium | CLI validation |
-| 49 | CLI | `test_cli.py` | `test_cli_narrative_missing_file` | Medium | File handling |
+| 48 | CLI | `test_cli.py` | `test_cli_narrative_requires_model` | Medium | ✅ IMPLEMENTED - CLI validation |
+| 49 | CLI | `test_cli.py` | `test_cli_narrative_missing_file` | Medium | ✅ IMPLEMENTED - File handling |
 | 50 | CLI | `test_cli.py` | `test_cli_narrative_integration` | Low | Integration |
 | **NARRATIVE PARSER** |
 | 51 | Narrative | `test_narrative.py` | `test_parser_builds_profile_from_json_payload` | Medium | ✅ EXISTS - Core functionality |
@@ -122,7 +122,7 @@
 - [ ] Models: Tests 3-4, 7
 - [x] Graph/Storage: Tests 13-14, 17-18, 21, 24 ✅ IMPLEMENTED
 - [x] API: Tests 26-27, 32-34 ✅ IMPLEMENTED (26-27 already exist)
-- [ ] CLI: Tests 39, 43-45, 48-49
+- [x] CLI: Tests 39, 43-45, 48-49 ✅ IMPLEMENTED
 - [ ] Narrative: Tests 51-53, 56, 59-60
 - [ ] Analysis: Tests 63-64, 71
 - [ ] Templates: Tests 75-76, 79-80, 82

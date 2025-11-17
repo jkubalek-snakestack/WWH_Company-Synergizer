@@ -21,12 +21,49 @@ class ProfileTemplateLibrary:
         self.load_from_dict(data)
 
     def load_from_dict(self, data: Dict) -> None:
-        for template in data.get("templates", []):
-            profile = ProfileTemplate.from_dict(template)
-            self.templates[profile.name] = profile
-        for rule in data.get("tiering_rules", []):
-            tier = TieringRule.from_dict(rule)
-            self.tiering_rules[tier.name] = tier
+        """Load templates and tiering rules from a dictionary with validation."""
+        if not isinstance(data, dict):
+            raise ValueError("Template bundle must be a dictionary")
+        
+        # Validate and load templates
+        templates = data.get("templates", [])
+        if not isinstance(templates, list):
+            raise ValueError("'templates' must be a list")
+        
+        for idx, template in enumerate(templates):
+            if not isinstance(template, dict):
+                raise ValueError(f"Template at index {idx} must be a dictionary")
+            if "name" not in template or not template.get("name"):
+                raise ValueError(f"Template at index {idx} is missing required field 'name'")
+            if "description" not in template:
+                raise ValueError(f"Template at index {idx} is missing required field 'description'")
+            
+            try:
+                profile = ProfileTemplate.from_dict(template)
+                self.templates[profile.name] = profile
+            except (TypeError, ValueError, KeyError) as e:
+                raise ValueError(f"Invalid template at index {idx}: {str(e)}") from e
+        
+        # Validate and load tiering rules
+        tiering_rules = data.get("tiering_rules", [])
+        if not isinstance(tiering_rules, list):
+            raise ValueError("'tiering_rules' must be a list")
+        
+        for idx, rule in enumerate(tiering_rules):
+            if not isinstance(rule, dict):
+                raise ValueError(f"Tiering rule at index {idx} must be a dictionary")
+            if "name" not in rule or not rule.get("name"):
+                raise ValueError(f"Tiering rule at index {idx} is missing required field 'name'")
+            if "description" not in rule:
+                raise ValueError(f"Tiering rule at index {idx} is missing required field 'description'")
+            if "criteria" not in rule:
+                raise ValueError(f"Tiering rule at index {idx} is missing required field 'criteria'")
+            
+            try:
+                tier = TieringRule.from_dict(rule)
+                self.tiering_rules[tier.name] = tier
+            except (TypeError, ValueError, KeyError) as e:
+                raise ValueError(f"Invalid tiering rule at index {idx}: {str(e)}") from e
 
     def template(self, name: str) -> ProfileTemplate:
         return self.templates[name]
