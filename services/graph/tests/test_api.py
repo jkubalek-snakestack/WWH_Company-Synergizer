@@ -365,3 +365,83 @@ def test_analyze_response_structure():
     # Groups is optional
     if "groups" in body:
         assert body["groups"] is None or isinstance(body["groups"], dict)
+
+
+def test_analyze_empty_opportunities_allowed():
+    """Verify API returns empty opportunities list when no matches exist."""
+    client = TestClient(create_app())
+    
+    # Create two companies with no complementary needs/offerings
+    payload = {
+        "profiles": [
+            {
+                "slug": "company-1",
+                "name": "Company One",
+                "offerings": [],
+                "needs": [],
+            },
+            {
+                "slug": "company-2",
+                "name": "Company Two",
+                "offerings": [],
+                "needs": [],
+            },
+        ]
+    }
+    
+    response = client.post("/synergy/analyze", json=payload)
+    
+    assert response.status_code == 200
+    body = response.json()
+    
+    # Should return empty lists, not error
+    assert isinstance(body["opportunities"], list)
+    assert isinstance(body["matches"], list)
+    # Both can be empty - that's valid
+    assert len(body["opportunities"]) == 0
+    assert len(body["matches"]) == 0
+
+
+def test_analyze_profiles_alias_works():
+    """Verify 'companies' key works as alias for 'profiles'."""
+    client = TestClient(create_app())
+    
+    # Use 'companies' instead of 'profiles'
+    payload = {
+        "companies": [
+            {
+                "slug": "test-company",
+                "name": "Test Company",
+            }
+        ]
+    }
+    
+    response = client.post("/synergy/analyze", json=payload)
+    
+    assert response.status_code == 200
+    body = response.json()
+    assert "opportunities" in body
+    assert "matches" in body
+
+
+def test_analyze_extra_fields_ignored():
+    """Verify API ignores extra fields in request (extra='ignore' config)."""
+    client = TestClient(create_app())
+    payload = load_sample_profiles()
+    
+    # Convert to profiles format (API accepts both 'profiles' and 'companies')
+    payload["profiles"] = payload.get("companies", [])
+    
+    # Add extra fields that shouldn't break the request
+    payload["extra_field"] = "should be ignored"
+    payload["another_field"] = {"nested": "data"}
+    if payload["profiles"]:
+        payload["profiles"][0]["unexpected_field"] = "also ignored"
+    
+    response = client.post("/synergy/analyze", json=payload)
+    
+    # Should still succeed - extra fields are ignored
+    assert response.status_code == 200
+    body = response.json()
+    assert "opportunities" in body
+    assert "matches" in body

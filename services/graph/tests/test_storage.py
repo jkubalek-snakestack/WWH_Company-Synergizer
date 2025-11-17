@@ -349,3 +349,114 @@ def test_graph_ingest_multiple_companies():
         matches = graph.matches_for(company.slug)
         assert len(matches) == 0
 
+
+def test_graph_matches_for_empty_returns_empty():
+    """Verify matches_for() returns empty list for company with no edges."""
+    graph = SynergyGraph()
+    company = create_test_company("test-company", "Test Company")
+    graph.upsert_company(company)
+    
+    # Company exists but has no edges
+    matches = graph.matches_for("test-company")
+    assert isinstance(matches, list)
+    assert len(matches) == 0
+    
+    # Non-existent company should raise KeyError (tested elsewhere)
+    # But if it doesn't exist, matches_for might return empty or raise
+    # Let's test with a company that exists but has no outgoing edges
+    company2 = create_test_company("company-2", "Company Two")
+    graph.upsert_company(company2)
+    matches2 = graph.matches_for("company-2")
+    assert len(matches2) == 0
+
+
+def test_graph_adjacency_matrix_correctness():
+    """Verify adjacency_matrix() returns correct weight mappings."""
+    graph = SynergyGraph()
+    
+    # Create companies
+    company1 = create_test_company("company-1", "Company One")
+    company2 = create_test_company("company-2", "Company Two")
+    company3 = create_test_company("company-3", "Company Three")
+    
+    graph.upsert_company(company1)
+    graph.upsert_company(company2)
+    graph.upsert_company(company3)
+    
+    # Link companies with different weights
+    graph.link_companies("company-1", "company-2", weight=0.8, label="Strong match", rationale="Test")
+    graph.link_companies("company-1", "company-3", weight=0.5, label="Moderate match", rationale="Test")
+    graph.link_companies("company-2", "company-3", weight=0.9, label="Very strong match", rationale="Test")
+    
+    matrix = graph.adjacency_matrix()
+    
+    # Verify structure
+    assert isinstance(matrix, dict)
+    
+    # Verify all edges are present
+    assert ("company-1", "company-2") in matrix
+    assert ("company-1", "company-3") in matrix
+    assert ("company-2", "company-3") in matrix
+    
+    # Verify weights
+    assert matrix[("company-1", "company-2")] == 0.8
+    assert matrix[("company-1", "company-3")] == 0.5
+    assert matrix[("company-2", "company-3")] == 0.9
+    
+    # Verify no reverse edges (unless explicitly created)
+    assert ("company-2", "company-1") not in matrix
+    assert ("company-3", "company-1") not in matrix
+    
+    # Empty graph should return empty matrix
+    empty_graph = SynergyGraph()
+    empty_matrix = empty_graph.adjacency_matrix()
+    assert isinstance(empty_matrix, dict)
+    assert len(empty_matrix) == 0
+
+
+def test_graph_edges_iterator():
+    """Verify edges() iterator returns all edges correctly."""
+    graph = SynergyGraph()
+    
+    # Create companies
+    company1 = create_test_company("company-1", "Company One")
+    company2 = create_test_company("company-2", "Company Two")
+    company3 = create_test_company("company-3", "Company Three")
+    
+    graph.upsert_company(company1)
+    graph.upsert_company(company2)
+    graph.upsert_company(company3)
+    
+    # Create multiple edges
+    graph.link_companies("company-1", "company-2", weight=0.8, label="Edge 1", rationale="Test")
+    graph.link_companies("company-1", "company-3", weight=0.5, label="Edge 2", rationale="Test")
+    graph.link_companies("company-2", "company-3", weight=0.9, label="Edge 3", rationale="Test")
+    
+    # Get all edges via iterator
+    edges = list(graph.edges())
+    
+    # Verify we got all edges
+    assert len(edges) == 3
+    
+    # Verify edge properties
+    edge_sources = {edge.source for edge in edges}
+    edge_targets = {edge.target for edge in edges}
+    edge_labels = {edge.label for edge in edges}
+    
+    assert "company-1" in edge_sources
+    assert "company-2" in edge_sources
+    assert "company-2" in edge_targets
+    assert "company-3" in edge_targets
+    assert "Edge 1" in edge_labels
+    assert "Edge 2" in edge_labels
+    assert "Edge 3" in edge_labels
+    
+    # Verify iterator can be consumed multiple times (should work, but let's test)
+    edges2 = list(graph.edges())
+    assert len(edges2) == 3
+    
+    # Empty graph should return empty iterator
+    empty_graph = SynergyGraph()
+    empty_edges = list(empty_graph.edges())
+    assert len(empty_edges) == 0
+
