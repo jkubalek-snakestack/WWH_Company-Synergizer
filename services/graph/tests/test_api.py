@@ -29,6 +29,7 @@ def test_analyze_returns_opportunities_and_matches():
 
 
 def test_analyze_requires_profiles():
+    """Verify API returns 400 when profiles list is empty."""
     client = TestClient(create_app())
 
     response = client.post("/synergy/analyze", json={"profiles": []})
@@ -37,8 +38,64 @@ def test_analyze_requires_profiles():
     assert response.json()["detail"] == "At least one profile is required"
 
 
+def test_analyze_handles_missing_profiles_and_companies():
+    """Verify API returns 400 when both profiles and companies keys are missing."""
+    client = TestClient(create_app())
+
+    response = client.post("/synergy/analyze", json={})
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "At least one profile is required"
+
+
+def test_analyze_handles_empty_payload():
+    """Verify API returns 400 when both profiles and companies are None/empty."""
+    client = TestClient(create_app())
+
+    # Test with both None
+    response = client.post("/synergy/analyze", json={"profiles": None, "companies": None})
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "At least one profile is required"
+
+    # Test with empty companies
+    response2 = client.post("/synergy/analyze", json={"companies": []})
+
+    assert response2.status_code == 400
+    assert response2.json()["detail"] == "At least one profile is required"
+
+
+def test_analyze_handles_mixed_profiles_and_companies():
+    """Verify API prefers profiles over companies when both are present."""
+    client = TestClient(create_app())
+    
+    # When both are present, profiles should be used
+    payload = {
+        "profiles": [
+            {
+                "slug": "profile-company",
+                "name": "Profile Company",
+            }
+        ],
+        "companies": [
+            {
+                "slug": "companies-company",
+                "name": "Companies Company",
+            }
+        ]
+    }
+
+    response = client.post("/synergy/analyze", json=payload)
+
+    # Should succeed and use profiles
+    assert response.status_code == 200
+    body = response.json()
+    assert body["opportunities"] is not None
+    assert body["matches"] is not None
+
+
 def test_analyze_handles_missing_slug():
-    """Verify API returns 422/400 when profile missing slug."""
+    """Verify API returns 422 when profile missing slug (not 500)."""
     client = TestClient(create_app())
     payload = {
         "profiles": [
@@ -51,17 +108,16 @@ def test_analyze_handles_missing_slug():
 
     response = client.post("/synergy/analyze", json=payload)
 
-    # FastAPI/Pydantic will return 422 for validation errors, but the actual
-    # error might be raised during CompanyProfile.from_dict() which could be 500
-    # This test documents the current behavior
-    assert response.status_code in [400, 422, 500]
-    # The response should indicate an error occurred
+    # Should return 422 (Unprocessable Entity) not 500 (Internal Server Error)
+    assert response.status_code == 422, f"Expected 422, got {response.status_code}: {response.json()}"
     body = response.json()
     assert "detail" in body
+    # Error should mention the missing field
+    assert "slug" in body["detail"].lower() or "index" in body["detail"].lower()
 
 
 def test_analyze_handles_missing_name():
-    """Verify API returns 422/400 when profile missing name."""
+    """Verify API returns 422 when profile missing name (not 500)."""
     client = TestClient(create_app())
     payload = {
         "profiles": [
@@ -74,20 +130,19 @@ def test_analyze_handles_missing_name():
 
     response = client.post("/synergy/analyze", json=payload)
 
-    # FastAPI/Pydantic will return 422 for validation errors, but the actual
-    # error might be raised during CompanyProfile.from_dict() which could be 500
-    # This test documents the current behavior
-    assert response.status_code in [400, 422, 500]
-    # The response should indicate an error occurred
+    # Should return 422 (Unprocessable Entity) not 500 (Internal Server Error)
+    assert response.status_code == 422, f"Expected 422, got {response.status_code}: {response.json()}"
     body = response.json()
     assert "detail" in body
+    # Error should mention the missing field
+    assert "name" in body["detail"].lower() or "index" in body["detail"].lower()
 
 
 def test_analyze_handles_invalid_json_structure():
-    """Verify API handles malformed profile data gracefully."""
+    """Verify API handles malformed profile data gracefully with 422 (not 500)."""
     client = TestClient(create_app())
     
-    # Test with completely malformed structure
+    # Test with completely malformed structure - offerings should be a list
     payload = {
         "profiles": [
             {
@@ -100,8 +155,10 @@ def test_analyze_handles_invalid_json_structure():
 
     response = client.post("/synergy/analyze", json=payload)
 
-    # The API should handle this gracefully (either validate or return error)
-    assert response.status_code in [400, 422, 500]
+    # Should return 422 (Unprocessable Entity) not 500 (Internal Server Error)
+    assert response.status_code == 422, f"Expected 422, got {response.status_code}: {response.json()}"
+    body = response.json()
+    assert "detail" in body
     
     # Test with missing required nested structure
     payload2 = {
@@ -120,11 +177,13 @@ def test_analyze_handles_invalid_json_structure():
     }
 
     response2 = client.post("/synergy/analyze", json=payload2)
-    assert response2.status_code in [400, 422, 500]
+    assert response2.status_code == 422, f"Expected 422, got {response2.status_code}: {response2.json()}"
+    body2 = response2.json()
+    assert "detail" in body2
 
 
 def test_analyze_handles_invalid_engagement_channels():
-    """Verify API handles invalid channel values in profiles."""
+    """Verify API handles invalid channel values in profiles with 422 (not 500)."""
     client = TestClient(create_app())
     payload = {
         "profiles": [
@@ -144,8 +203,10 @@ def test_analyze_handles_invalid_engagement_channels():
 
     response = client.post("/synergy/analyze", json=payload)
 
-    # The API should handle invalid enum values gracefully
-    assert response.status_code in [400, 422, 500]
+    # Should return 422 (Unprocessable Entity) not 500 (Internal Server Error)
+    assert response.status_code == 422, f"Expected 422, got {response.status_code}: {response.json()}"
+    body = response.json()
+    assert "detail" in body
     
     # Test with invalid channels in needs
     payload2 = {
@@ -165,4 +226,6 @@ def test_analyze_handles_invalid_engagement_channels():
     }
 
     response2 = client.post("/synergy/analyze", json=payload2)
-    assert response2.status_code in [400, 422, 500]
+    assert response2.status_code == 422, f"Expected 422, got {response2.status_code}: {response2.json()}"
+    body2 = response2.json()
+    assert "detail" in body2

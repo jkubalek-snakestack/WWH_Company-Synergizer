@@ -34,10 +34,10 @@
 | **API** |
 | 26 | API | `test_api.py` | `test_analyze_returns_opportunities_and_matches` | Medium | ✅ EXISTS - Core functionality |
 | 27 | API | `test_api.py` | `test_analyze_requires_profiles` | Medium | ✅ EXISTS - Input validation |
-| 28 | API | `test_api.py` | `test_analyze_handles_missing_slug` | **High** | Missing validation |
-| 29 | API | `test_api.py` | `test_analyze_handles_missing_name` | **High** | Missing validation |
-| 30 | API | `test_api.py` | `test_analyze_handles_invalid_json_structure` | **High** | Error handling |
-| 31 | API | `test_api.py` | `test_analyze_handles_invalid_engagement_channels` | **High** | Enum validation |
+| 28 | API | `test_api.py` | `test_analyze_handles_missing_slug` | **High** | ✅ IMPLEMENTED - Missing validation |
+| 29 | API | `test_api.py` | `test_analyze_handles_missing_name` | **High** | ✅ IMPLEMENTED - Missing validation |
+| 30 | API | `test_api.py` | `test_analyze_handles_invalid_json_structure` | **High** | ✅ IMPLEMENTED - Error handling |
+| 31 | API | `test_api.py` | `test_analyze_handles_invalid_engagement_channels` | **High** | ✅ IMPLEMENTED - Enum validation |
 | 32 | API | `test_api.py` | `test_analyze_with_template_bundle` | Medium | Template integration |
 | 33 | API | `test_api.py` | `test_analyze_with_invalid_template_bundle` | Medium | Template error handling |
 | 34 | API | `test_api.py` | `test_analyze_response_structure` | Medium | Response validation |
@@ -112,7 +112,7 @@
 ### Phase 1: High Priority (25 tests)
 - [ ] Models: Tests 1-2, 5-6, 8
 - [x] Graph/Storage: Tests 15-16, 19-20 ✅ IMPLEMENTED
-- [ ] API: Tests 28-31
+- [x] API: Tests 28-31 ✅ IMPLEMENTED
 - [ ] CLI: Tests 40-42
 - [ ] Narrative: Tests 54-55, 58
 - [ ] Analysis: Tests 68-69
